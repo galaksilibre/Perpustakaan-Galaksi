@@ -275,7 +275,7 @@
                                     <td>Asy'ari</td>
                                     <td>Seri Tokoh Islam</td>
                                     <td><span class="badge bg-success">Tersedia</span></td>
-                                }
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -327,8 +327,11 @@
     <script>
         // Inisialisasi object Modal Bootstrap
         let modalPencarian;
+        let elemenModal;
+
         window.addEventListener('DOMContentLoaded', () => {
-            modalPencarian = new bootstrap.Modal(document.getElementById('searchModal'));
+            elemenModal = document.getElementById('searchModal');
+            modalPencarian = new bootstrap.Modal(elemenModal);
         });
 
         // =======================================================
@@ -344,8 +347,10 @@
                 // Jalankan filter data
                 eksekusiFilterKatalog(inputUtama.toLowerCase().trim());
                 
-                // Tampilkan jendela Pop-up
-                modalPencarian.show();
+                // Hanya jalankan pemicu pop-up jika kondisi modal sedang tertutup (menghindari error macet)
+                if (!elemenModal.classList.contains('show')) {
+                    modalPencarian.show();
+                }
             }
         }
 
@@ -363,8 +368,9 @@
             let baris = tbody.getElementsByTagName("tr");
             let jumlahBukuCocok = 0;
 
+            // Bersihkan pesan kosong lama jika ada
             let pesanLama = document.getElementById("barisPesanKosong");
-            if (pesanLama) { pesaLama.remove(); }
+            if (pesanLama) { pesanLama.remove(); }
 
             for (let i = 0; i < baris.length; i++) {
                 let teksBaris = baris[i].textContent.toLowerCase();
@@ -383,7 +389,7 @@
                     <td colspan="5" class="text-center py-5 bg-light text-secondary">
                         <div class="mb-2" style="font-size: 1.8rem;">🔍⚠️</div>
                         <h5 class="fw-bold text-dark mb-1">Buku Tidak Ditemukan</h5>
-                        <small class="text-muted">Maaf, kata kunci tersebut belum terdaftar dalam katalog GalaksiLibre.<br>Silakan cek kembali ejaan Anda atau usulkan buku ke Pustakawan.</small>
+                        <small class="text-muted">Maaf, kata kunci tersebut belum terdaftar dalam katalog.<br>Silakan cek kembali ejaan Anda atau usulkan buku ke Pustakawan.</small>
                     </td>
                 `;
                 tbody.appendChild(barisBaru);
@@ -393,6 +399,7 @@
         function bersihkanPencarian() {
             document.getElementById("inputCariBuku").value = "";
             document.getElementById("inputCariBukuModal").value = "";
+            eksekusiFilterKatalog(""); // Reset data agar kembali normal
         }
 
         // =======================================================
