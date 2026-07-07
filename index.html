@@ -113,7 +113,7 @@
                 </div>
                 
                 <div class="col-md-7 ps-md-4 py-3">
-                    <h6 class="fw-bold mb-3">Pilihan Hadiah Tahun Ini (2026):</h6>
+                    <h6 class="fw-bold mb-3">Pilihan Hadiah Bulan Ini (Agustus 2026):</h6>
                     
                     <div class="d-flex justify-content-between align-items-center mb-3 p-2 border-bottom">
                         <div>
@@ -284,8 +284,21 @@
         // =======================================================
         
         // Mengambil poin yang tersimpan di HP siswa saat web dibuka
-        let poinSekarang = localStorage.getItem("poinLiterasi") ? parseInt(localStorage.getItem("poinLiterasi")) : 0;
-        document.getElementById("displayPoin").innerText = poinSekarang;
+       // =======================================================
+// SYSTEM RESET POIN OTOMATIS TIAP BULAN BARU
+// =======================================================
+let bulanIni = new Date().getMonth(); // Mengambil angka bulan saat ini (0 = Januari, 6 = Juli, 7 = Agustus, dst.)
+let bulanTerakhirPoin = localStorage.getItem("bulanTerakhirPoin");
+
+// Jika siswa membuka web di bulan yang berbeda dengan bulan terakhir mereka klaim poin...
+if (bulanTerakhirPoin !== null && parseInt(bulanTerakhirPoin) !== bulanIni) {
+    localStorage.setItem("poinLiterasi", 0); // Poin otomatis di-reset jadi 0
+    localStorage.setItem("bulanTerakhirPoin", bulanIni); // Update catatan bulan baru
+}
+
+// Ambil data poin yang sudah disesuaikan
+let poinSekarang = localStorage.getItem("poinLiterasi") ? parseInt(localStorage.getItem("poinLiterasi")) : 0;
+document.getElementById("displayPoin").innerText = poinSekarang;
 
         function klaimPoinHarian() {
             let hariIni = new Date().toDateString(); // Mengambil tanggal hari ini (misal: "Tue Jul 07 2026")
