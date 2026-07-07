@@ -110,6 +110,16 @@
                     <div class="display-4 fw-bold my-2" id="displayPoin" style="color: #A51C30;">0</div>
                     <p class="text-secondary small fw-bold">Total Poin Anda</p>
                     <button class="btn btn-harvard w-100 py-2" id="btnCheckIn" onclick="klaimPoinHarian()">🗓️ Ambil Poin Hari Ini (+10 Poin)</button>
+                    <button class="btn btn-harvard w-100 py-2 mb-3" id="btnCheckIn" onclick="klaimPoinHarian()">🗓️ Ambil Poin Hari Ini (+10 Poin)</button>
+                    
+                    <div class="p-3 bg-light rounded border text-start">
+                        <label class="form-label small fw-bold mb-1 text-dark">🏢 Kunjungan Offline Perpustakaan</label>
+                        <p class="text-muted" style="font-size: 0.75rem; margin-bottom: 8px;">Minta token rahasia hari ini ke pustakawan saat Anda datang ke perpus!</p>
+                        <div class="input-group input-group-sm">
+                            <input type="text" id="inputTokenOffline" class="form-control text-uppercase" placeholder="Masukkan Token...">
+                            <button class="btn btn-dark" type="button" onclick="klaimPoinOffline()">Klaim (+20)</button>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="col-md-7 ps-md-4 py-3">
@@ -316,7 +326,40 @@ document.getElementById("displayPoin").innerText = poinSekarang;
                 alert("🎉 Selamat! +10 Poin berhasil ditambahkan ke akun Anda.");
             }
         }
+// =======================================================
+        // LOGIKA KLAIM POIN OFFLINE MENGGUNAKAN TOKEN
+        // =======================================================
+        function klaimPoinOffline() {
+            let hariIni = new Date().toDateString();
+            let terakhirToken = localStorage.getItem("terakhirTokenOffline");
+            let inputUser = document.getElementById("inputTokenOffline").value.trim().toUpperCase();
 
+            // 1. DAFTAR TOKEN RAHASIA (Anda bisa ganti/tambah kata di bawah ini sesuka hati)
+            // Cukup siapkan token untuk hari-hari aktif sekolah
+            let tokenSah = ["PERPUSKEREN", "BACAJELAJAH", "GALAKSI2026", "SMKN4BISA", "SUKABUMILITERASI"];
+
+            // Pengecekan 1: Apakah siswa sudah pernah klaim token offline hari ini?
+            if (terakhirToken === hariIni) {
+                alert("❌ Anda sudah mengklaim poin kunjungan offline hari ini!");
+                document.getElementById("inputTokenOffline").value = "";
+                return;
+            }
+
+            // Pengecekan 2: Apakah teks yang diketik siswa cocok dengan salah satu token sah?
+            if (tokenSah.includes(inputUser)) {
+                poinSekarang += 20; // Hadiah 20 poin karena sudah repot datang offline
+                localStorage.setItem("poinLiterasi", poinSekarang);
+                localStorage.setItem("terakhirTokenOffline", hariIni); // Kunci agar tidak bisa spam hari ini
+                
+                // Update layar poin
+                document.getElementById("displayPoin").innerText = poinSekarang;
+                document.getElementById("inputTokenOffline").value = "";
+                
+                alert("🎉 LUAR BIASA!\n\n+20 Poin berhasil ditambahkan karena kunjungan fisik Anda ke perpustakaan hari ini. Teruslah membaca!");
+            } else {
+                alert("❌ Token salah atau kadaluwarsa! Pastikan Anda bertanya langsung ke Pustakawan di meja utama.");
+            }
+        }
         function tukarHadiah(biayaPoin, kodeKupon) {
             if (poinSekarang < biayaPoin) {
                 alert("⚠️ Poin Anda tidak cukup untuk menukarkan hadiah ini.");
