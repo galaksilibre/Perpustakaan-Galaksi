@@ -101,7 +101,48 @@
             </div>
         </div>
     </div>
+<div class="container mb-5">
+        <div class="card p-4 shadow-sm" style="border: none; border-top: 4px solid #A51C30; border-radius: 4px;">
+            <div class="row align-items-center">
+                <div class="col-md-5 text-center border-end py-3">
+                    <h5 style="font-family: 'Playfair Display', serif; font-weight: 700;">🎁 Kumpulkan Poin Literasi!</h5>
+                    <p class="text-muted small">Buka web perpus setiap hari, klaim poin, dan tukarkan dengan hadiah menarik di perpustakaan.</p>
+                    <div class="display-4 fw-bold my-2" id="displayPoin" style="color: #A51C30;">0</div>
+                    <p class="text-secondary small fw-bold">Total Poin Anda</p>
+                    <button class="btn btn-harvard w-100 py-2" id="btnCheckIn" onclick="klaimPoinHarian()">🗓️ Ambil Poin Hari Ini (+10 Poin)</button>
+                </div>
+                
+                <div class="col-md-7 ps-md-4 py-3">
+                    <h6 class="fw-bold mb-3">Pilihan Hadiah Bulan Ini (Juli 2026):</h6>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 border-bottom">
+                        <div>
+                            <span class="fw-bold d-block">Penghapus & Pulpen Estetik</span>
+                            <small class="text-muted">Butuh 30 Poin</small>
+                        </div>
+                        <button class="btn btn-sm btn-dark" onclick="tukarHadiah(30, 'PULPEN-ESTETIK')">Tukarkan</button>
+                    </div>
 
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 border-bottom">
+                        <div>
+                            <span class="fw-bold d-block">Kupon Bebas Denda Buku 1x</span>
+                            <small class="text-muted">Butuh 50 Poin</small>
+                        </div>
+                        <button class="btn btn-sm btn-dark" onclick="tukarHadiah(50, 'BEBAS-DENDA-OK')">Tukarkan</button>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center p-2">
+                        <div>
+                            <span class="fw-bold d-block">Susu Kotak / Snack Kantin</span>
+                            <small class="text-muted">Butuh 100 Poin</small>
+                        </div>
+                        <button class="btn btn-sm btn-dark" onclick="tukarHadiah(100, 'SNACK-KANTIN-MILK')">Tukarkan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 <div class="container my-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 style="font-family: 'Playfair Display', serif; font-weight: 700; color: #1e1e1e; margin: 0;">✨ Koleksi Buku Terbaru</h3>
@@ -236,6 +277,49 @@
                         tr[i].style.display = "none";
                     }
                 }       
+            }
+        }
+        // =======================================================
+        // LOGIKA JAVASCRIPT UNTUK SISTEM HADIAH POIN
+        // =======================================================
+        
+        // Mengambil poin yang tersimpan di HP siswa saat web dibuka
+        let poinSekarang = localStorage.getItem("poinLiterasi") ? parseInt(localStorage.getItem("poinLiterasi")) : 0;
+        document.getElementById("displayPoin").innerText = poinSekarang;
+
+        function klaimPoinHarian() {
+            let hariIni = new Date().toDateString(); // Mengambil tanggal hari ini (misal: "Tue Jul 07 2026")
+            let terakhirCheckIn = localStorage.getItem("terakhirCheckIn");
+
+            if (terakhirCheckIn === hariIni) {
+                alert("❌ Anda sudah mengambil poin hari ini! Kembali lagi besok ya.");
+            } else {
+                poinSekarang += 10;
+                localStorage.setItem("poinLiterasi", poinSekarang);
+                localStorage.setItem("terakhirCheckIn", hariIni);
+                
+                // Update tampilan angka poin di layar
+                document.getElementById("displayPoin").innerText = poinSekarang;
+                alert("🎉 Selamat! +10 Poin berhasil ditambahkan ke akun Anda.");
+            }
+        }
+
+        function tukarHadiah(biayaPoin, kodeKupon) {
+            if (poinSekarang < biayaPoin) {
+                alert("⚠️ Poin Anda tidak cukup untuk menukarkan hadiah ini.");
+            } else {
+                let konfirmasi = confirm("Apakah Anda yakin ingin menukarkan " + biayaPoin + " poin?");
+                if (konfirmasi) {
+                    poinSekarang -= biayaPoin;
+                    localStorage.setItem("poinLiterasi", poinSekarang);
+                    document.getElementById("displayPoin").innerText = poinSekarang;
+
+                    // Membuat kode verifikasi unik (Kombinasi acak agar siswa tidak bisa memalsukan kode)
+                    let kodeAcak = Math.floor(1000 + Math.random() * 9000);
+                    let kuponFinal = kodeKupon + "-" + kodeAcak;
+
+                    alert("🎉 BERHASIL!\n\nSilakan SCREENSHOT layar ini dan tunjukkan ke Pustakawan:\n\nKODE KUPON: " + kuponFinal + "\n\nJangan tutup pesan ini sebelum di-screenshot!");
+                }
             }
         }
     </script>
